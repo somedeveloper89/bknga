@@ -14,6 +14,6 @@ import retrofit2.http.GET;
  */
 
 public interface BakingAPI {
-    @GET("recipes")
+    @GET("baking.json")
     Call<List<Recipe>> getRecipes();
 }

@@ -30,7 +30,7 @@ public class RecipeActivity extends AppCompatActivity implements Callback<List<R
 
     private static final String TAG = RecipeActivity.class.getSimpleName();
 
-    private static final String BASE_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
+    private static final String BASE_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/";
 
     @BindView(R.id.recipe_loading_progress)
     ProgressBar mProgressBar;
