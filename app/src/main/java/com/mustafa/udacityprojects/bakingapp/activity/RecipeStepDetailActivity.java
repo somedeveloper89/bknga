@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.mustafa.udacityprojects.bakingapp.R;
 import com.mustafa.udacityprojects.bakingapp.fragment.RecipeStepDetailFragment;
+import com.mustafa.udacityprojects.bakingapp.model.Ingredient;
 import com.mustafa.udacityprojects.bakingapp.model.Recipe;
 import com.mustafa.udacityprojects.bakingapp.model.Step;
 

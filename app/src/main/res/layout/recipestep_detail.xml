@@ -4,6 +4,7 @@
     android:id="@+id/fragment_recipe_step_detail_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
     android:layout_margin="@dimen/default_margin"
     android:orientation="vertical">
 
@@ -22,24 +23,33 @@
 
     <TextView
         android:id="@+id/recipe_step_instruction"
+        android:layout_marginTop="@dimen/default_margin"
+        android:textSize="22sp"
+        android:textColor="@color/white"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <LinearLayout
+        android:layout_marginTop="@dimen/default_margin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <Button
             android:id="@+id/navigate_preivous_step"
+            android:background="@color/colorPrimaryDark"
             android:layout_width="0dp"
+            android:textColor="@color/white"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
             android:text="@string/previous_step" />
 
         <Button
             android:id="@+id/navigate_next_step"
+            android:layout_marginLeft="@dimen/default_margin"
+            android:background="@color/colorPrimaryDark"
             android:layout_width="0dp"
+            android:textColor="@color/white"
             android:layout_height="wrap_content"
             android:layout_weight="0.5"
             android:text="@string/next_step" />

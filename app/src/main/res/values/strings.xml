@@ -8,4 +8,5 @@
     <string name="title_recipestep_detail">Recipe Step Detail</string>
     <string name="next_step">Next step</string>
     <string name="previous_step">Previous step</string>
+    <string name="recipe_ingredients">Recipe ingredients</string>
 </resources>

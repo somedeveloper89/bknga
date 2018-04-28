@@ -5,8 +5,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -34,6 +36,8 @@ public class RecipeActivity extends AppCompatActivity implements Callback<List<R
     private static final String BASE_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/";
     public static final String EXTRA_RECIPE = "EXTRA_RECIPE";
 
+    private static final int RECIPE_WIDTH = 300;
+
     @BindView(R.id.recipe_loading_progress)
     ProgressBar mProgressBar;
     @BindView(R.id.recipe_loading_textview)
@@ -51,11 +55,42 @@ public class RecipeActivity extends AppCompatActivity implements Callback<List<R
         ButterKnife.bind(this);
 
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new GridLayoutManager(this, 1));
+
+        final GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 1);
+        mRecyclerView.setLayoutManager(gridLayoutManager);
+
+        /**
+         * Found this snippet on stackoverflow https://stackoverflow.com/questions/26666143/recyclerview-gridlayoutmanager-how-to-auto-detect-span-count.
+         */
+        mRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(
+                new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        mRecyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        int viewWidth = mRecyclerView.getMeasuredWidth();
+                        int newSpanCount = (int) Math.floor(viewWidth / convertDPToPixels(RECIPE_WIDTH));
+                        gridLayoutManager.setSpanCount(newSpanCount);
+                        gridLayoutManager.requestLayout();
+                    }
+                });
+
         retrieveRecipes();
     }
 
-    public void retrieveRecipes() {
+    /**
+     * Helper method for converting dp to pixels. Gist taken from https://gist.github.com/mtsahakis/33085460b9707fdf0729.
+     *
+     * @param dp The dp value.
+     * @return <code>float</code> converted pixel value.
+     */
+    private float convertDPToPixels(int dp) {
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        float logicalDensity = metrics.density;
+        return dp * logicalDensity;
+    }
+
+    private void retrieveRecipes() {
         loading();
 
         Gson gson = new GsonBuilder()

@@ -103,10 +103,6 @@ public class RecipeStepDetailFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-//        else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
-//            exitFullScreenDialog();
-//        }
-
         if (mCurrentStep != null) {
             mRecipeInstructionTextView.setText(mCurrentStep.getDescription());
         }

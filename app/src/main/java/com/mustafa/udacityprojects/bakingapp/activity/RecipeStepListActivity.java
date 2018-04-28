@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.mustafa.udacityprojects.bakingapp.R;
 import com.mustafa.udacityprojects.bakingapp.fragment.RecipeStepDetailFragment;
+import com.mustafa.udacityprojects.bakingapp.model.Ingredient;
 import com.mustafa.udacityprojects.bakingapp.model.Recipe;
 import com.mustafa.udacityprojects.bakingapp.model.Step;
 
@@ -67,7 +68,6 @@ public class RecipeStepListActivity extends AppCompatActivity implements
         }
 
         setSupportActionBar(mToolbar);
-        mToolbar.setTitle(getTitle());
 
         // Show the Up button in the action bar.
         ActionBar actionBar = getSupportActionBar();
@@ -96,8 +96,18 @@ public class RecipeStepListActivity extends AppCompatActivity implements
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+
+        setTitle(mRecipe.getName());
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+
+        // before saving remove the ingredients step (will be added separately)
+        mRecipe.getSteps().remove(0);
 
         outState.putParcelable(RecipeActivity.EXTRA_RECIPE, mRecipe);
         outState.putInt(EXTRA_CURRENT_STEP_POSITION, mAdapter.getCurrentStepPosition());
@@ -138,6 +148,7 @@ public class RecipeStepListActivity extends AppCompatActivity implements
             @Override
             public void onClick(View view) {
                 mSelectedStep = (Step) view.getTag();
+
                 if (mTwoPane) {
                     launchRecipeStepDetailFragmentWithStep();
                 } else {
@@ -155,8 +166,24 @@ public class RecipeStepListActivity extends AppCompatActivity implements
                                       Recipe recipe, boolean twoPane) {
             mRecipeStepDescriptions = recipe.getSteps();
             mCurrentRecipe = recipe;
+            mRecipeStepDescriptions.add(0, new Step(50, "Recipe Ingredients", createIngredientDescription(), "", ""));
             mParentActivity = parent;
             mTwoPane = twoPane;
+        }
+
+        private String createIngredientDescription() {
+            StringBuilder description = new StringBuilder();
+
+            for (Ingredient ingredient : mCurrentRecipe.getIngredients()) {
+                description.append(ingredient.getIngredient());
+                description.append(" | ");
+                description.append(ingredient.getQuantity());
+                description.append(" | ");
+                description.append(ingredient.getMeasure());
+                description.append("\n");
+            }
+
+            return description.toString();
         }
 
         @Override

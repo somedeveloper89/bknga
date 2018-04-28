@@ -23,8 +23,8 @@
         android:name="com.mustafa.udacityprojects.bakingapp.RecipeStepListFragment"
         android:layout_width="@dimen/item_width"
         android:layout_height="match_parent"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginLeft="@dimen/default_margin"
+        android:layout_marginRight="@dimen/default_margin"
         app:layoutManager="android.support.v7.widget.LinearLayoutManager"
 
         tools:context="com.mustafa.udacityprojects.bakingapp.activity.RecipeStepListActivity"
