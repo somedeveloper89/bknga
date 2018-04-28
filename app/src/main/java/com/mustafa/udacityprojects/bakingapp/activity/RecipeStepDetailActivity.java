@@ -30,6 +30,7 @@ import butterknife.ButterKnife;
 public class RecipeStepDetailActivity extends AppCompatActivity implements
         RecipeStepDetailFragment.StepNavigationListener {
     public static final String EXTRA_CURRENT_RECIPE = "EXTRA_CURRENT_RECIPE";
+    private static final String EXTRA_CURRENT_STEP_POSITION = "EXTRA_CURRENT_STEP_POSITION";
 
     private Recipe mRecipe;
     private Step mCurrentStep;
@@ -55,10 +56,22 @@ public class RecipeStepDetailActivity extends AppCompatActivity implements
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             mRecipe = getIntent().getParcelableExtra(EXTRA_CURRENT_RECIPE);
-            mCurrentStep = getIntent().getParcelableExtra(RecipeStepDetailFragment.EXTRA_SELECTED_STEP);
+            mCurrentStep = getIntent()
+                    .getParcelableExtra(RecipeStepDetailFragment.EXTRA_SELECTED_STEP);
 
             launchRecipeStepDetailFragmentWithStep();
+        } else {
+            mRecipe = savedInstanceState.getParcelable(EXTRA_CURRENT_RECIPE);
+            mCurrentStep = mRecipe.getSteps().get(savedInstanceState.getInt(EXTRA_CURRENT_STEP_POSITION));
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelable(EXTRA_CURRENT_RECIPE, mRecipe);
+        outState.putInt(EXTRA_CURRENT_STEP_POSITION, findIndexOfStep());
     }
 
     @Override

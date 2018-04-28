@@ -1,6 +1,7 @@
 package com.mustafa.udacityprojects.bakingapp.fragment;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.os.Bundle;
@@ -9,9 +10,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -28,7 +32,6 @@ import com.mustafa.udacityprojects.bakingapp.R;
 import com.mustafa.udacityprojects.bakingapp.activity.RecipeStepListActivity;
 import com.mustafa.udacityprojects.bakingapp.activity.RecipeStepDetailActivity;
 import com.mustafa.udacityprojects.bakingapp.model.Step;
-import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -55,7 +58,7 @@ public class RecipeStepDetailFragment extends Fragment {
     ImageView mStepImage;
 
     private Step mCurrentStep;
-    private SimpleExoPlayer mPlayer;
+    private SimpleExoPlayer mExoPlayer;
 
     private StepNavigationListener mListener;
 
@@ -102,11 +105,11 @@ public class RecipeStepDetailFragment extends Fragment {
 
         if (mCurrentStep.getVideoUrl() != null && !mCurrentStep.getVideoUrl().isEmpty()) {
             mPlayerView.setVisibility(View.VISIBLE);
-            startExoPlayer(mCurrentStep.getVideoUrl());
+            initializePlayer(mCurrentStep.getVideoUrl());
         } else if ((mCurrentStep.getThumbnailUrl() != null &&
                 !mCurrentStep.getThumbnailUrl().isEmpty())) {
             mPlayerView.setVisibility(View.VISIBLE);
-            startExoPlayer(mCurrentStep.getThumbnailUrl());
+            initializePlayer(mCurrentStep.getThumbnailUrl());
         }
     }
 
@@ -117,27 +120,44 @@ public class RecipeStepDetailFragment extends Fragment {
         mListener = (StepNavigationListener) context;
     }
 
-    private void startExoPlayer(String videoUrl) {
+    private void initializePlayer(String mediaUrl) {
+        if (mExoPlayer == null) {
+            TrackSelector trackSelector = new DefaultTrackSelector();
+            mExoPlayer = ExoPlayerFactory.newSimpleInstance(getActivity(), trackSelector);
+            mPlayerView.setPlayer(mExoPlayer);
+            String userAgent = Util.getUserAgent(getContext(),
+                    getContext().getApplicationInfo().name);
+            DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getContext(),
+                    userAgent, null);
+            MediaSource mediaSource = new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse(mediaUrl));
+            mExoPlayer.prepare(mediaSource);
+            mExoPlayer.setPlayWhenReady(true);
+        }
+    }
 
-        // Measures bandwidth during playback. Can be null if not required.
-        DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
+    private void releasePlayer() {
+        if (mExoPlayer != null) {
+            mExoPlayer.stop();
+            mExoPlayer.release();
+            mExoPlayer = null;
+        }
+    }
 
-        TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(
-                bandwidthMeter);
-        TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
 
-        mPlayer = ExoPlayerFactory.newSimpleInstance(getActivity(), trackSelector);
-        mPlayerView.setPlayer(mPlayer);
-
-        // Produces DataSource instances through which media data is loaded.
-        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getContext(),
-                Util.getUserAgent(getActivity(),
-                        getContext().getApplicationInfo().name), bandwidthMeter);
-
-        MediaSource mediaSource = new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse(videoUrl));
-
-        mPlayer.prepare(mediaSource);
-        mPlayer.setPlayWhenReady(true);
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) mPlayerView.getLayoutParams();
+            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+            mPlayerView.setLayoutParams(params);
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) mPlayerView.getLayoutParams();
+            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            params.height = 600;
+            mPlayerView.setLayoutParams(params);
+        }
     }
 
     @Override
@@ -148,12 +168,9 @@ public class RecipeStepDetailFragment extends Fragment {
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
-
-        if (mPlayer != null) {
-            mPlayer.release();
-        }
+    public void onDestroy() {
+        super.onDestroy();
+        releasePlayer();
     }
 
     @OnClick(R.id.navigate_next_step)

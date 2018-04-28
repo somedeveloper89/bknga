@@ -36,10 +36,8 @@ import butterknife.ButterKnife;
 public class RecipeStepListActivity extends AppCompatActivity implements
         RecipeStepDetailFragment.StepNavigationListener{
 
-    /**
-     * Whether or not the activity is in two-pane mode, i.e. running on a tablet
-     * device.
-     */
+    public static final String EXTRA_CURRENT_STEP_POSITION = "EXTRA_CURRENT_STEP_POSITION";
+
     private boolean mTwoPane;
     private Recipe mRecipe;
 
@@ -58,9 +56,12 @@ public class RecipeStepListActivity extends AppCompatActivity implements
         ButterKnife.bind(this);
 
         mRecipe = null;
+        int lastStepPosition = -1;
 
         if (savedInstanceState != null) {
             mRecipe = savedInstanceState.getParcelable(RecipeActivity.EXTRA_RECIPE);
+            lastStepPosition = savedInstanceState.getInt(EXTRA_CURRENT_STEP_POSITION);
+
         } else if (getIntent().hasExtra(RecipeActivity.EXTRA_RECIPE)) {
             mRecipe = getIntent().getParcelableExtra(RecipeActivity.EXTRA_RECIPE);
         }
@@ -87,6 +88,18 @@ public class RecipeStepListActivity extends AppCompatActivity implements
         mAdapter = new SimpleItemRecyclerViewAdapter(this, mRecipe, mTwoPane);
 
         mRecyclerView.setAdapter(mAdapter);
+
+        if (lastStepPosition != -1) {
+            mAdapter.loadStep(lastStepPosition);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelable(RecipeActivity.EXTRA_RECIPE, mRecipe);
+        outState.putInt(EXTRA_CURRENT_STEP_POSITION, mAdapter.getCurrentStepPosition());
     }
 
     @Override
@@ -183,6 +196,15 @@ public class RecipeStepListActivity extends AppCompatActivity implements
                 }
             }
             return -1;
+        }
+
+        public int getCurrentStepPosition() {
+            return findIndexOfStep();
+        }
+
+        public void loadStep(int position) {
+            mSelectedStep = mRecipeStepDescriptions.get(position);
+            launchRecipeStepDetailFragmentWithStep();
         }
 
         @Override
