@@ -1,5 +1,6 @@
 package com.mustafa.udacityprojects.bakingapp.activity;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -26,11 +27,12 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class RecipeActivity extends AppCompatActivity implements Callback<List<Recipe>> {
+public class RecipeActivity extends AppCompatActivity implements Callback<List<Recipe>>, RecipeRecyclerViewAdapter.Listener {
 
     private static final String TAG = RecipeActivity.class.getSimpleName();
 
     private static final String BASE_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/";
+    public static final String EXTRA_RECIPE = "EXTRA_RECIPE";
 
     @BindView(R.id.recipe_loading_progress)
     ProgressBar mProgressBar;
@@ -81,7 +83,7 @@ public class RecipeActivity extends AppCompatActivity implements Callback<List<R
                 Log.d(TAG, "onResponse: " + recipe.getName());
             }
 
-            mRecipeRecyclerViewAdapter = new RecipeRecyclerViewAdapter(recipeList);
+            mRecipeRecyclerViewAdapter = new RecipeRecyclerViewAdapter(this, recipeList);
             mRecyclerView.setAdapter(mRecipeRecyclerViewAdapter);
         } else {
             Log.d(TAG, "onResponse: response not successful");
@@ -102,5 +104,12 @@ public class RecipeActivity extends AppCompatActivity implements Callback<List<R
     private void loadingFinished() {
         mProgressBar.setVisibility(View.GONE);
         mMessage.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onRecipeClick(Recipe recipe) {
+        Intent intent = new Intent(this, RecipeStepListActivity.class);
+        intent.putExtra(EXTRA_RECIPE, recipe);
+        startActivity(intent);
     }
 }

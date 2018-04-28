@@ -9,9 +9,17 @@ import android.view.View;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.mustafa.udacityprojects.bakingapp.R;
 import com.mustafa.udacityprojects.bakingapp.fragment.RecipeStepDetailFragment;
+import com.mustafa.udacityprojects.bakingapp.model.Recipe;
+import com.mustafa.udacityprojects.bakingapp.model.Step;
+
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * An activity representing a single Recipe Step detail screen. This
@@ -19,23 +27,23 @@ import com.mustafa.udacityprojects.bakingapp.fragment.RecipeStepDetailFragment;
  * item details are presented side-by-side with a list of items
  * in a {@link RecipeStepListActivity}.
  */
-public class RecipeStepDetailActivity extends AppCompatActivity {
+public class RecipeStepDetailActivity extends AppCompatActivity implements
+        RecipeStepDetailFragment.StepNavigationListener {
+    public static final String EXTRA_CURRENT_RECIPE = "EXTRA_CURRENT_RECIPE";
+
+    private Recipe mRecipe;
+    private Step mCurrentStep;
+
+    @BindView(R.id.detail_toolbar)
+    Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipestep_detail);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
-        setSupportActionBar(toolbar);
+        ButterKnife.bind(this);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        setSupportActionBar(mToolbar);
 
         // Show the Up button in the action bar.
         ActionBar actionBar = getSupportActionBar();
@@ -43,41 +51,69 @@ public class RecipeStepDetailActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        // savedInstanceState is non-null when there is fragment state
-        // saved from previous configurations of this activity
-        // (e.g. when rotating the screen from portrait to landscape).
-        // In this case, the fragment will automatically be re-added
-        // to its container so we don't need to manually add it.
-        // For more information, see the Fragments API guide at:
-        //
-        // http://developer.android.com/guide/components/fragments.html
-        //
         if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
-            Bundle arguments = new Bundle();
-            arguments.putString(RecipeStepDetailFragment.ARG_ITEM_ID,
-                    getIntent().getStringExtra(RecipeStepDetailFragment.ARG_ITEM_ID));
-            RecipeStepDetailFragment fragment = new RecipeStepDetailFragment();
-            fragment.setArguments(arguments);
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.recipestep_detail_container, fragment).commit();
+            mRecipe = getIntent().getParcelableExtra(EXTRA_CURRENT_RECIPE);
+            mCurrentStep = getIntent().getParcelableExtra(RecipeStepDetailFragment.EXTRA_SELECTED_STEP);
+
+            launchRecipeStepDetailFragmentWithStep();
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        setTitle(mRecipe.getName());
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            // This ID represents the Home or Up button. In the case of this
-            // activity, the Up button is shown. For
-            // more details, see the Navigation pattern on Android Design:
-            //
-            // http://developer.android.com/design/patterns/navigation.html#up-vs-back
-            //
-            navigateUpTo(new Intent(this, RecipeStepListActivity.class));
+            finish();
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private int findIndexOfStep() {
+        for (Step step : mRecipe.getSteps()) {
+            if (step.getId() == mCurrentStep.getId()) {
+                return mRecipe.getSteps().indexOf(step);
+            }
+        }
+        return -1;
+    }
+
+    @Override
+    public void onNextStep() {
+        int currentPosition = findIndexOfStep();
+
+        if (mRecipe.getSteps().size() - 1 > currentPosition) {
+            mCurrentStep = mRecipe.getSteps().get(++currentPosition);
+            launchRecipeStepDetailFragmentWithStep();
+        } else {
+            Toast.makeText(this, "This is the last step of this recipe", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onPreviousStep() {
+        int currentPosition = findIndexOfStep();
+
+        if (currentPosition > 0) {
+            mCurrentStep = mRecipe.getSteps().get(--currentPosition);
+            launchRecipeStepDetailFragmentWithStep();
+        } else {
+            Toast.makeText(this, "This is the first step of this recipe", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void launchRecipeStepDetailFragmentWithStep() {
+        RecipeStepDetailFragment fragment = RecipeStepDetailFragment.newInstance(mCurrentStep);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.recipestep_detail_container, fragment).commit();
     }
 }

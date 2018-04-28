@@ -1,9 +1,48 @@
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          android:id="@+id/recipestep_detail"
-          style="?android:attr/textAppearanceLarge"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"
-          android:padding="16dp"
-          android:textIsSelectable="true"
-          tools:context="com.mustafa.udacityprojects.bakingapp.fragment.RecipeStepDetailFragment"/>
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_margin="@dimen/default_margin">
+
+    <com.google.android.exoplayer2.ui.PlayerView
+        android:id="@+id/playerview"
+        android:layout_width="match_parent"
+        android:visibility="gone"
+        android:layout_height="250dp"/>
+
+    <ImageView
+        android:id="@+id/step_image"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:visibility="gone"
+        tools:ignore="ContentDescription" />
+
+    <TextView
+        android:id="@+id/recipe_step_instruction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/navigate_preivous_step"
+            android:text="@string/previous_step"
+            android:layout_weight="0.5"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/navigate_next_step"
+            android:text="@string/next_step"
+            android:layout_width="0dp"
+            android:layout_weight="0.5"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+</LinearLayout>

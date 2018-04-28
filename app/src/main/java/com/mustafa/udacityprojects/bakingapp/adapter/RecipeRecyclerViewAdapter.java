@@ -24,15 +24,17 @@ import butterknife.ButterKnife;
 public class RecipeRecyclerViewAdapter
         extends RecyclerView.Adapter<RecipeRecyclerViewAdapter.ViewHolder> {
 
-    private List<Recipe> recipeList;
+    private List<Recipe> mRecipeList;
+    private Listener mListener;
 
     /**
      * Constructor for initialization.
      *
      * @param recipes the list of recipes to show.
      */
-    public RecipeRecyclerViewAdapter(List<Recipe> recipes) {
-        recipeList = recipes;
+    public RecipeRecyclerViewAdapter(Listener listener, List<Recipe> recipes) {
+        mListener = listener;
+        mRecipeList = recipes;
     }
 
     @Override
@@ -45,19 +47,25 @@ public class RecipeRecyclerViewAdapter
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Recipe recipe = recipeList.get(position);
+        final Recipe recipe = mRecipeList.get(position);
 
         holder.mTextView.setText(recipe.getName());
 
-        Context context = holder.mCardView.getContext();
         if (!recipe.getImageUrl().equals("")) {
-            Picasso.with(context).load(recipe.getImageUrl()).into(holder.recipeImage);
+            Picasso.get().load(recipe.getImageUrl()).into(holder.recipeImage);
         }
+
+        holder.mCardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.onRecipeClick(recipe);
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
-        return recipeList.size();
+        return mRecipeList.size();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
@@ -73,4 +81,17 @@ public class RecipeRecyclerViewAdapter
             ButterKnife.bind(this, view);
         }
     }
+
+    /**
+     * Interface that notifies it's mListener(s).
+     */
+    public interface Listener {
+        /**
+         * Invoked when the user clicks a recipe.
+         *
+         * @param recipe The recipe that has been clicked.
+         */
+        void onRecipeClick(Recipe recipe);
+    }
+
 }

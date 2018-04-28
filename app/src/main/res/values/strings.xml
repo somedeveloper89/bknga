@@ -6,4 +6,6 @@
     <string name="loading_recipes_text">Loading recipes…</string>
     <string name="title_recipestep_list">Recipe Steps</string>
     <string name="title_recipestep_detail">Recipe Step Detail</string>
+    <string name="next_step">Next step</string>
+    <string name="previous_step">Previous step</string>
 </resources>
