@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fragment_recipe_step_detail_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_margin="@dimen/default_margin">
+    android:layout_margin="@dimen/default_margin"
+    android:orientation="vertical">
 
     <com.google.android.exoplayer2.ui.PlayerView
         android:id="@+id/playerview"
         android:layout_width="match_parent"
-        android:visibility="gone"
-        android:layout_height="250dp"/>
+        android:layout_height="250dp"
+        android:visibility="gone" />
 
     <ImageView
         android:id="@+id/step_image"
@@ -25,23 +26,23 @@
         android:layout_height="wrap_content" />
 
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/navigate_preivous_step"
-            android:text="@string/previous_step"
-            android:layout_weight="0.5"
             android:layout_width="0dp"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:text="@string/previous_step" />
 
         <Button
             android:id="@+id/navigate_next_step"
-            android:text="@string/next_step"
             android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="0.5"
-            android:layout_height="wrap_content" />
+            android:text="@string/next_step" />
 
     </LinearLayout>
 

@@ -1,11 +1,13 @@
 package com.mustafa.udacityprojects.bakingapp.fragment;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,6 +63,8 @@ public class RecipeStepDetailFragment extends Fragment {
     private SimpleExoPlayer mExoPlayer;
 
     private StepNavigationListener mListener;
+    private Dialog mFullScreenDialog;
+    private boolean mExoPlayerFullScreen;
 
     /**
      * Create a new instance.
@@ -99,6 +103,10 @@ public class RecipeStepDetailFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+//        else if (orientation == Configuration.ORIENTATION_PORTRAIT) {
+//            exitFullScreenDialog();
+//        }
+
         if (mCurrentStep != null) {
             mRecipeInstructionTextView.setText(mCurrentStep.getDescription());
         }
@@ -120,11 +128,53 @@ public class RecipeStepDetailFragment extends Fragment {
         mListener = (StepNavigationListener) context;
     }
 
+    private void initFullScreenDialog() {
+        mFullScreenDialog = new Dialog(getContext(),
+                android.R.style.Theme_Black_NoTitleBar_Fullscreen) {
+            @Override
+            public void onBackPressed() {
+                if (mExoPlayerFullScreen) {
+                    exitFullScreenDialog();
+                }
+                super.onBackPressed();
+            }
+        };
+    }
+
+    private void launchFullScreenDialog() {
+        ((ViewGroup) mPlayerView.getParent()).removeView(mPlayerView);
+        mFullScreenDialog.addContentView(mPlayerView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        mExoPlayerFullScreen = true;
+        mFullScreenDialog.show();
+    }
+
+    private void exitFullScreenDialog() {
+
+        if (getView() != null) {
+            ((ViewGroup) mPlayerView.getParent()).removeView(mPlayerView);
+            ((LinearLayout) getView().findViewById(R.id.fragment_recipe_step_detail_container)).addView(mPlayerView, 0);
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) mPlayerView.getLayoutParams();
+            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            params.height = 600;
+            mPlayerView.setLayoutParams(params);
+            mExoPlayerFullScreen = false;
+            mFullScreenDialog.dismiss();
+        }
+    }
+
     private void initializePlayer(String mediaUrl) {
         if (mExoPlayer == null) {
             TrackSelector trackSelector = new DefaultTrackSelector();
             mExoPlayer = ExoPlayerFactory.newSimpleInstance(getActivity(), trackSelector);
             mPlayerView.setPlayer(mExoPlayer);
+
+            int orientation = getResources().getConfiguration().orientation;
+
+            if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                initFullScreenDialog();
+                launchFullScreenDialog();
+            }
+
             String userAgent = Util.getUserAgent(getContext(),
                     getContext().getApplicationInfo().name);
             DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getContext(),
@@ -132,6 +182,8 @@ public class RecipeStepDetailFragment extends Fragment {
             MediaSource mediaSource = new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse(mediaUrl));
             mExoPlayer.prepare(mediaSource);
             mExoPlayer.setPlayWhenReady(true);
+
+
         }
     }
 
@@ -140,23 +192,6 @@ public class RecipeStepDetailFragment extends Fragment {
             mExoPlayer.stop();
             mExoPlayer.release();
             mExoPlayer = null;
-        }
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) mPlayerView.getLayoutParams();
-            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            params.height = ViewGroup.LayoutParams.MATCH_PARENT;
-            mPlayerView.setLayoutParams(params);
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) mPlayerView.getLayoutParams();
-            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            params.height = 600;
-            mPlayerView.setLayoutParams(params);
         }
     }
 

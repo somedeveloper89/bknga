@@ -89,7 +89,8 @@ public class RecipeStepListActivity extends AppCompatActivity implements
 
         mRecyclerView.setAdapter(mAdapter);
 
-        if (lastStepPosition != -1) {
+        // only applicable when in twopane mode
+        if (lastStepPosition != -1 && mTwoPane) {
             mAdapter.loadStep(lastStepPosition);
         }
     }
@@ -190,11 +191,15 @@ public class RecipeStepListActivity extends AppCompatActivity implements
         }
 
         private int findIndexOfStep() {
-            for (Step step : mRecipeStepDescriptions) {
-                if (step.getId() == mSelectedStep.getId()) {
-                    return mRecipeStepDescriptions.indexOf(step);
+
+            if (mSelectedStep != null) {
+                for (Step step : mRecipeStepDescriptions) {
+                    if (step.getId() == mSelectedStep.getId()) {
+                        return mRecipeStepDescriptions.indexOf(step);
+                    }
                 }
             }
+
             return -1;
         }
 
