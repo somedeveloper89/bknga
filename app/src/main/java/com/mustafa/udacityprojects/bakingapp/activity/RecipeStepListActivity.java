@@ -106,11 +106,6 @@ public class RecipeStepListActivity extends AppCompatActivity
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        // before saving remove the ingredients step (will be added separately)
-        if (mRecipe.getSteps() != null && mRecipe.getSteps().size() > 0) {
-            mRecipe.getSteps().remove(0);
-        }
-
         outState.putParcelable(RecipeActivity.EXTRA_RECIPE, mRecipe);
         outState.putInt(EXTRA_CURRENT_STEP_POSITION, mAdapter.getCurrentStepPosition());
     }
@@ -143,6 +138,7 @@ public class RecipeStepListActivity extends AppCompatActivity
         private final List<Step> mRecipeStepDescriptions;
         private final boolean mTwoPane;
         private final Recipe mCurrentRecipe;
+        private int selectedPosition = -1;
 
         private Step mSelectedStep;
 
@@ -150,6 +146,10 @@ public class RecipeStepListActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 mSelectedStep = (Step) view.getTag();
+                selectedPosition = getCurrentStepPosition();
+                view.setSelected(mTwoPane);
+
+                notifyDataSetChanged();
 
                 if (mTwoPane) {
                     launchRecipeStepDetailFragmentWithStep();
@@ -168,8 +168,23 @@ public class RecipeStepListActivity extends AppCompatActivity
                                       boolean twoPane) {
             mRecipeStepDescriptions = recipe.getSteps();
             mCurrentRecipe = recipe;
-            mRecipeStepDescriptions.add(0,
-                    new Step(50, "Recipe Ingredients", createIngredientDescription(), "", ""));
+
+            boolean ingredientStepAlreadyInList = false;
+
+            if (mRecipeStepDescriptions != null && mRecipeStepDescriptions.size() > 0) {
+                for (Step step : mRecipeStepDescriptions) {
+                    if (step.getShortDescription().equals("Recipe Ingredients")) {
+                        ingredientStepAlreadyInList = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!ingredientStepAlreadyInList) {
+                mRecipeStepDescriptions.add(0,
+                        new Step(-1, "Recipe Ingredients", createIngredientDescription(), "", ""));
+            }
+
             mParentActivity = parent;
             mTwoPane = twoPane;
         }
@@ -198,6 +213,8 @@ public class RecipeStepListActivity extends AppCompatActivity
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
+            holder.itemView.setSelected(mTwoPane && position == selectedPosition);
+
             Step currentStep = mRecipeStepDescriptions.get(position);
 
             holder.mIdView.setText(currentStep.getShortDescription());
@@ -239,15 +256,18 @@ public class RecipeStepListActivity extends AppCompatActivity
 
         public void loadStep(int position) {
             mSelectedStep = mRecipeStepDescriptions.get(position);
+            selectedPosition = position;
+            notifyDataSetChanged();
             launchRecipeStepDetailFragmentWithStep();
         }
 
         @Override
         public void onNextStep() {
-            int currentPosition = findIndexOfStep();
+            selectedPosition = findIndexOfStep();
 
-            if (mRecipeStepDescriptions.size() - 1 > currentPosition) {
-                mSelectedStep = mRecipeStepDescriptions.get(++currentPosition);
+            if (mRecipeStepDescriptions.size() - 1 > selectedPosition) {
+                mSelectedStep = mRecipeStepDescriptions.get(++selectedPosition);
+                notifyDataSetChanged();
                 launchRecipeStepDetailFragmentWithStep();
             } else {
                 Toast.makeText(mParentActivity, "This is the last step of this recipe",
@@ -257,10 +277,11 @@ public class RecipeStepListActivity extends AppCompatActivity
 
         @Override
         public void onPreviousStep() {
-            int currentPosition = findIndexOfStep();
+            selectedPosition = findIndexOfStep();
 
-            if (currentPosition > 0) {
-                mSelectedStep = mRecipeStepDescriptions.get(--currentPosition);
+            if (selectedPosition > 0) {
+                mSelectedStep = mRecipeStepDescriptions.get(--selectedPosition);
+                notifyDataSetChanged();
                 launchRecipeStepDetailFragmentWithStep();
             } else {
                 Toast.makeText(mParentActivity, "This is the first step of this recipe",
