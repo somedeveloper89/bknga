@@ -1,0 +1,68 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#09C"
+    android:layout_margin="8dp"
+    android:padding="@dimen/widget_margin">
+
+    <TextView
+        android:id="@+id/appwidget_recipe_title"
+        android:text="@string/recipe_name"
+        android:textSize="14sp"
+        android:gravity="center"
+        android:background="#09C"
+        android:textColor="@color/white"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_below="@id/appwidget_recipe_title"
+        android:id="@+id/appwidget_title_divider"
+        android:layout_width="match_parent"
+        android:background="@color/white"
+        android:layout_height="1dp"
+        tools:ignore="Orientation" />
+
+    <TextView
+        android:id="@+id/appwidget_ingredients"
+        android:layout_below="@+id/appwidget_title_divider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:background="#09C"
+        android:textColor="@color/white"
+        android:contentDescription="@string/appwidget_text"
+        android:text="@string/appwidget_text"
+        android:textSize="12sp" />
+
+    <LinearLayout
+        android:id="@+id/appwidget_buttons_divider"
+        android:layout_above="@+id/appwidget_button_container"
+        android:layout_width="match_parent"
+        android:background="@color/white"
+        android:layout_height="1dp"
+        tools:ignore="Orientation" />
+
+    <LinearLayout
+        android:id="@+id/appwidget_button_container"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:text="@string/previous_recipe"
+            android:layout_width="0dp"
+            android:layout_weight="0.5"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:text="@string/next_recipe"
+            android:layout_width="0dp"
+            android:layout_weight="0.5"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+</RelativeLayout>

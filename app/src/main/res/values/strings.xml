@@ -9,4 +9,9 @@
     <string name="next_step">Next step</string>
     <string name="previous_step">Previous step</string>
     <string name="recipe_ingredients">Recipe ingredients</string>
+    <string name="appwidget_text">Some ingredient</string>
+    <string name="add_widget">Add widget</string>
+    <string name="next_recipe">Next</string>
+    <string name="previous_recipe">Previous</string>
+    <string name="recipe_name">Recipe name: blaaah</string>
 </resources>
