@@ -63,7 +63,10 @@ public class RecipeStepDetailActivity extends AppCompatActivity implements
             launchRecipeStepDetailFragmentWithStep();
         } else {
             mRecipe = savedInstanceState.getParcelable(EXTRA_CURRENT_RECIPE);
-            mCurrentStep = mRecipe.getSteps().get(savedInstanceState.getInt(EXTRA_CURRENT_STEP_POSITION));
+            int currentStepPosition = savedInstanceState.getInt(EXTRA_CURRENT_STEP_POSITION);
+            if (currentStepPosition != -1) {
+                mCurrentStep = mRecipe.getSteps().get(currentStepPosition);
+            }
         }
     }
 

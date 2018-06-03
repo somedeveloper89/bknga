@@ -34,8 +34,8 @@ import butterknife.ButterKnife;
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-public class RecipeStepListActivity extends AppCompatActivity implements
-        RecipeStepDetailFragment.StepNavigationListener{
+public class RecipeStepListActivity extends AppCompatActivity
+        implements RecipeStepDetailFragment.StepNavigationListener {
 
     public static final String EXTRA_CURRENT_STEP_POSITION = "EXTRA_CURRENT_STEP_POSITION";
 
@@ -107,7 +107,9 @@ public class RecipeStepListActivity extends AppCompatActivity implements
         super.onSaveInstanceState(outState);
 
         // before saving remove the ingredients step (will be added separately)
-        mRecipe.getSteps().remove(0);
+        if (mRecipe.getSteps() != null && mRecipe.getSteps().size() > 0) {
+            mRecipe.getSteps().remove(0);
+        }
 
         outState.putParcelable(RecipeActivity.EXTRA_RECIPE, mRecipe);
         outState.putInt(EXTRA_CURRENT_STEP_POSITION, mAdapter.getCurrentStepPosition());
@@ -134,8 +136,8 @@ public class RecipeStepListActivity extends AppCompatActivity implements
     }
 
     public static class SimpleItemRecyclerViewAdapter
-            extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> implements
-            RecipeStepDetailFragment.StepNavigationListener{
+            extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder>
+            implements RecipeStepDetailFragment.StepNavigationListener {
 
         private final RecipeStepListActivity mParentActivity;
         private final List<Step> mRecipeStepDescriptions;
@@ -162,11 +164,12 @@ public class RecipeStepListActivity extends AppCompatActivity implements
             }
         };
 
-        SimpleItemRecyclerViewAdapter(RecipeStepListActivity parent,
-                                      Recipe recipe, boolean twoPane) {
+        SimpleItemRecyclerViewAdapter(RecipeStepListActivity parent, Recipe recipe,
+                                      boolean twoPane) {
             mRecipeStepDescriptions = recipe.getSteps();
             mCurrentRecipe = recipe;
-            mRecipeStepDescriptions.add(0, new Step(50, "Recipe Ingredients", createIngredientDescription(), "", ""));
+            mRecipeStepDescriptions.add(0,
+                    new Step(50, "Recipe Ingredients", createIngredientDescription(), "", ""));
             mParentActivity = parent;
             mTwoPane = twoPane;
         }
@@ -247,7 +250,8 @@ public class RecipeStepListActivity extends AppCompatActivity implements
                 mSelectedStep = mRecipeStepDescriptions.get(++currentPosition);
                 launchRecipeStepDetailFragmentWithStep();
             } else {
-                Toast.makeText(mParentActivity, "This is the last step of this recipe", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mParentActivity, "This is the last step of this recipe",
+                        Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -259,7 +263,8 @@ public class RecipeStepListActivity extends AppCompatActivity implements
                 mSelectedStep = mRecipeStepDescriptions.get(--currentPosition);
                 launchRecipeStepDetailFragmentWithStep();
             } else {
-                Toast.makeText(mParentActivity, "This is the first step of this recipe", Toast.LENGTH_SHORT).show();
+                Toast.makeText(mParentActivity, "This is the first step of this recipe",
+                        Toast.LENGTH_SHORT).show();
             }
         }
 

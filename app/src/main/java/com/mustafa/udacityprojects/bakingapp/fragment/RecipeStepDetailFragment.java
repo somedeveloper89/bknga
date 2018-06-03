@@ -154,7 +154,7 @@ public class RecipeStepDetailFragment extends Fragment {
             params.height = 600;
             mPlayerView.setLayoutParams(params);
             mExoPlayerFullScreen = false;
-            mFullScreenDialog.dismiss();
+            dismissFullScreenDialog();
         }
     }
 
@@ -191,17 +191,23 @@ public class RecipeStepDetailFragment extends Fragment {
         }
     }
 
+    private void dismissFullScreenDialog() {
+        if (mFullScreenDialog != null) {
+            mFullScreenDialog.dismiss();
+        }
+    }
+
     @Override
     public void onDetach() {
         super.onDetach();
-
         mListener = null;
     }
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
+        dismissFullScreenDialog();
         releasePlayer();
+        super.onDestroy();
     }
 
     @OnClick(R.id.navigate_next_step)
