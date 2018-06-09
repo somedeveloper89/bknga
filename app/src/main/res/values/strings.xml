@@ -9,9 +9,13 @@
     <string name="next_step">Next step</string>
     <string name="previous_step">Previous step</string>
     <string name="recipe_ingredients">Recipe ingredients</string>
-    <string name="appwidget_text">Some ingredient</string>
+    <string name="appwidget_text">Some ingredddsfsfsfient</string>
     <string name="add_widget">Add widget</string>
-    <string name="next_recipe">Next</string>
-    <string name="previous_recipe">Previous</string>
+    <string name="previous_recipe">Refresh</string>
     <string name="recipe_name">Recipe name: blaaah</string>
+    <string name="preference_file_key">chosenrecipe</string>
+    <string name="current_recipe_title">current_recipe_title</string>
+    <string name="no_recipe_selected">No recipe chosen</string>
+    <string name="current_recipe_ingredient_description">current_recipe_ingredient_description</string>
+    <string name="no_recipe_selected_instruction">Launch the Baking app by clicking me and select a recipe. Then click on the refresh button below me to see the ingredients.</string>
 </resources>

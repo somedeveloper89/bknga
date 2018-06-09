@@ -11,7 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.RecipeActivity">
+        <activity android:name=".activity.RecipeActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -21,7 +22,7 @@
         <activity
             android:name=".activity.RecipeStepListActivity"
             android:label="@string/title_recipestep_list"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity
             android:name=".activity.RecipeStepDetailActivity"
             android:label="@string/title_recipestep_detail"
@@ -32,7 +33,9 @@
                 android:value="com.mustafa.udacityprojects.bakingapp.activity.RecipeStepListActivity" />
         </activity>
 
-        <receiver android:name=".activity.BakingWidget">
+        <service android:name=".service.BakingWidgetService"/>
+
+        <receiver android:name=".widget.BakingWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>

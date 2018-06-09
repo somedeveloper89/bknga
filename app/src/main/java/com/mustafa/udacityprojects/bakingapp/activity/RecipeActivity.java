@@ -1,6 +1,9 @@
 package com.mustafa.udacityprojects.bakingapp.activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -16,6 +19,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mustafa.udacityprojects.bakingapp.R;
 import com.mustafa.udacityprojects.bakingapp.adapter.RecipeRecyclerViewAdapter;
+import com.mustafa.udacityprojects.bakingapp.model.Ingredient;
 import com.mustafa.udacityprojects.bakingapp.model.Recipe;
 import com.mustafa.udacityprojects.bakingapp.service.BakingAPI;
 
@@ -29,11 +33,13 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class RecipeActivity extends AppCompatActivity implements Callback<List<Recipe>>, RecipeRecyclerViewAdapter.Listener {
+public class RecipeActivity extends AppCompatActivity
+        implements Callback<List<Recipe>>, RecipeRecyclerViewAdapter.Listener {
 
     private static final String TAG = RecipeActivity.class.getSimpleName();
 
-    private static final String BASE_URL = "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/";
+    public static final String BASE_URL = "https://d17h27t6h515a5.cloudfront" +
+            ".net/topher/2017/May/59121517_baking/";
     public static final String EXTRA_RECIPE = "EXTRA_RECIPE";
 
     private static final int RECIPE_WIDTH = 300;
@@ -44,8 +50,6 @@ public class RecipeActivity extends AppCompatActivity implements Callback<List<R
     TextView mMessage;
     @BindView(R.id.recyclerview)
     RecyclerView mRecyclerView;
-
-    private RecipeRecyclerViewAdapter mRecipeRecyclerViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,15 +64,17 @@ public class RecipeActivity extends AppCompatActivity implements Callback<List<R
         mRecyclerView.setLayoutManager(gridLayoutManager);
 
         /**
-         * Found this snippet on stackoverflow https://stackoverflow.com/questions/26666143/recyclerview-gridlayoutmanager-how-to-auto-detect-span-count.
+         * Found this snippet on stackoverflow https://stackoverflow
+         * .com/questions/26666143/recyclerview-gridlayoutmanager-how-to-auto-detect-span-count.
          */
-        mRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(
-                new ViewTreeObserver.OnGlobalLayoutListener() {
+        mRecyclerView.getViewTreeObserver()
+                .addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                     @Override
                     public void onGlobalLayout() {
                         mRecyclerView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                         int viewWidth = mRecyclerView.getMeasuredWidth();
-                        int newSpanCount = (int) Math.floor(viewWidth / convertDPToPixels(RECIPE_WIDTH));
+                        int newSpanCount = (int) Math
+                                .floor(viewWidth / convertDPToPixels(RECIPE_WIDTH));
                         gridLayoutManager.setSpanCount(newSpanCount);
                         gridLayoutManager.requestLayout();
                     }
@@ -78,7 +84,8 @@ public class RecipeActivity extends AppCompatActivity implements Callback<List<R
     }
 
     /**
-     * Helper method for converting dp to pixels. Gist taken from https://gist.github.com/mtsahakis/33085460b9707fdf0729.
+     * Helper method for converting dp to pixels. Gist taken from https://gist.github
+     * .com/mtsahakis/33085460b9707fdf0729.
      *
      * @param dp The dp value.
      * @return <code>float</code> converted pixel value.
@@ -93,13 +100,10 @@ public class RecipeActivity extends AppCompatActivity implements Callback<List<R
     private void retrieveRecipes() {
         loading();
 
-        Gson gson = new GsonBuilder()
-                .setLenient()
-                .create();
+        Gson gson = new GsonBuilder().setLenient().create();
 
         Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create(gson))
-                .build();
+                .addConverterFactory(GsonConverterFactory.create(gson)).build();
 
         BakingAPI mBakingAPI = retrofit.create(BakingAPI.class);
         Call<List<Recipe>> call = mBakingAPI.getRecipes();
@@ -118,7 +122,8 @@ public class RecipeActivity extends AppCompatActivity implements Callback<List<R
                 Log.d(TAG, "onResponse: " + recipe.getName());
             }
 
-            mRecipeRecyclerViewAdapter = new RecipeRecyclerViewAdapter(this, recipeList);
+            RecipeRecyclerViewAdapter mRecipeRecyclerViewAdapter = new RecipeRecyclerViewAdapter(
+                    this, recipeList);
             mRecyclerView.setAdapter(mRecipeRecyclerViewAdapter);
         } else {
             Log.d(TAG, "onResponse: response not successful");
@@ -143,8 +148,35 @@ public class RecipeActivity extends AppCompatActivity implements Callback<List<R
 
     @Override
     public void onRecipeClick(Recipe recipe) {
+        storeChosenRecipeDescription(recipe);
+
         Intent intent = new Intent(this, RecipeStepListActivity.class);
         intent.putExtra(EXTRA_RECIPE, recipe);
         startActivity(intent);
     }
+
+    private void storeChosenRecipeDescription(Recipe recipe) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(getString(R.string.current_recipe_title), recipe.getName());
+        editor.putString(getString(R.string.current_recipe_ingredient_description),
+                getRecipeIngredientDescription(recipe));
+        editor.apply();
+    }
+
+    private String getRecipeIngredientDescription(Recipe recipe) {
+        StringBuilder description = new StringBuilder();
+
+        for (Ingredient ingredient : recipe.getIngredients()) {
+            description.append(ingredient.getIngredient());
+            description.append(" | ");
+            description.append(ingredient.getQuantity());
+            description.append(" | ");
+            description.append(ingredient.getMeasure());
+            description.append("\n");
+        }
+
+        return description.toString();
+    }
+
 }
