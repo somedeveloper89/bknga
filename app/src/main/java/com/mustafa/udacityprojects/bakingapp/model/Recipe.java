@@ -1,3 +1,7 @@
+/**
+ * Copyright (C) 2018 Mustafa Kabaktepe
+ */
+
 package com.mustafa.udacityprojects.bakingapp.model;
 
 import android.os.Parcel;
@@ -12,8 +16,19 @@ import java.util.List;
 /**
  * This class represents a recipe.
  */
-public class Recipe implements Parcelable{
+public class Recipe implements Parcelable {
 
+    public static final Creator<Recipe> CREATOR = new Creator<Recipe>() {
+        @Override
+        public Recipe createFromParcel(Parcel in) {
+            return new Recipe(in);
+        }
+
+        @Override
+        public Recipe[] newArray(int size) {
+            return new Recipe[size];
+        }
+    };
     @SerializedName("id")
     @Expose
     private int id;
@@ -33,7 +48,8 @@ public class Recipe implements Parcelable{
     @Expose
     private String imageUrl;
 
-    public Recipe(int id, String name, List<Ingredient> ingredients, List<Step> steps, int servings, String imageUrl) {
+    public Recipe(int id, String name, List<Ingredient> ingredients, List<Step> steps, int servings,
+                  String imageUrl) {
         this.id = id;
         this.name = name;
         this.ingredients = ingredients;
@@ -85,18 +101,6 @@ public class Recipe implements Parcelable{
     public int describeContents() {
         return 0;
     }
-
-    public static final Creator<Recipe> CREATOR = new Creator<Recipe>() {
-        @Override
-        public Recipe createFromParcel(Parcel in) {
-            return new Recipe(in);
-        }
-
-        @Override
-        public Recipe[] newArray(int size) {
-            return new Recipe[size];
-        }
-    };
 
     public int getId() {
         return id;

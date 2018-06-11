@@ -9,7 +9,6 @@
     <TextView
         android:id="@+id/appwidget_recipe_title"
         android:layout_marginTop="@dimen/default_margin"
-        android:text="@string/recipe_name"
         android:textSize="20sp"
         android:gravity="center"
         android:background="#09C"
@@ -36,7 +35,6 @@
         android:background="#09C"
         android:textColor="@color/white"
         android:contentDescription="@string/appwidget_text"
-        android:text="@string/appwidget_text"
         android:textSize="18sp" />
 
     <Button

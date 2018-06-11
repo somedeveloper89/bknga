@@ -1,6 +1,9 @@
+/**
+ * Copyright (C) 2018 Mustafa Kabaktepe
+ */
+
 package com.mustafa.udacityprojects.bakingapp.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -33,6 +36,9 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+/**
+ * This activity shows a grid of recipes.
+ */
 public class RecipeActivity extends AppCompatActivity
         implements Callback<List<Recipe>>, RecipeRecyclerViewAdapter.Listener {
 

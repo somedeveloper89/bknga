@@ -1,11 +1,11 @@
+/**
+ * Copyright (C) 2018 Mustafa Kabaktepe
+ */
+
 package com.mustafa.udacityprojects.bakingapp.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
@@ -13,11 +13,8 @@ import android.widget.Toast;
 
 import com.mustafa.udacityprojects.bakingapp.R;
 import com.mustafa.udacityprojects.bakingapp.fragment.RecipeStepDetailFragment;
-import com.mustafa.udacityprojects.bakingapp.model.Ingredient;
 import com.mustafa.udacityprojects.bakingapp.model.Recipe;
 import com.mustafa.udacityprojects.bakingapp.model.Step;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

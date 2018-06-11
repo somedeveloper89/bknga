@@ -1,3 +1,7 @@
+/**
+ * Copyright (C) 2018 Mustafa Kabaktepe
+ */
+
 package com.mustafa.udacityprojects.bakingapp.model;
 
 import android.os.Parcel;
@@ -10,6 +14,17 @@ import com.google.gson.annotations.SerializedName;
  * This class represents a step.
  */
 public class Step implements Parcelable {
+    public static final Creator<Step> CREATOR = new Creator<Step>() {
+        @Override
+        public Step createFromParcel(Parcel in) {
+            return new Step(in);
+        }
+
+        @Override
+        public Step[] newArray(int size) {
+            return new Step[size];
+        }
+    };
     @SerializedName("id")
     @Expose
     private int id;
@@ -42,18 +57,6 @@ public class Step implements Parcelable {
         videoUrl = in.readString();
         thumbnailUrl = in.readString();
     }
-
-    public static final Creator<Step> CREATOR = new Creator<Step>() {
-        @Override
-        public Step createFromParcel(Parcel in) {
-            return new Step(in);
-        }
-
-        @Override
-        public Step[] newArray(int size) {
-            return new Step[size];
-        }
-    };
 
     public int getId() {
         return id;

@@ -1,3 +1,7 @@
+/**
+ * Copyright (C) 2018 Mustafa Kabaktepe
+ */
+
 package com.mustafa.udacityprojects.bakingapp.service;
 
 import android.app.IntentService;
@@ -13,23 +17,25 @@ import com.mustafa.udacityprojects.bakingapp.R;
 import com.mustafa.udacityprojects.bakingapp.widget.BakingWidgetProvider;
 
 /**
- * TODO: add description for this class.
- *
- * @author Mustafa Kabaktepe 09/06/2018, SNS Bank N.V.
+ * IntentService that supplies data to the BakingWidget.
  */
 public class BakingWidgetService extends IntentService {
+    public static final String ACTION_RECIPE =
+            "com.mustafa.udacityprojects.bakingapp.widget" + ".action.recipe";
     private static final String TAG = "BakingWidgetService";
 
-    public static final String ACTION_RECIPE = "com.mustafa.udacityprojects.bakingapp.widget" +
-            ".action.recipe";
-
     /**
-     * Creates an IntentService.  Invoked by your subclass's constructor.
+     * Creates an IntentService. Invoked by your subclass's constructor.
      */
     public BakingWidgetService() {
         super(TAG);
     }
 
+    /**
+     * Starts the intent service with action ACTION_RECIPE.
+     *
+     * @param context the context.
+     */
     public static void startNextRecipe(Context context) {
         Intent intent = new Intent(context, BakingWidgetService.class);
         intent.setAction(ACTION_RECIPE);

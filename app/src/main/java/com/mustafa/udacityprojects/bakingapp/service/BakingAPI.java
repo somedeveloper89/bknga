@@ -1,3 +1,7 @@
+/**
+ * Copyright (C) 2018 Mustafa Kabaktepe
+ */
+
 package com.mustafa.udacityprojects.bakingapp.service;
 
 import com.mustafa.udacityprojects.bakingapp.model.Recipe;
@@ -8,9 +12,7 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 
 /**
- * TODO: add description for this class.
- *
- * @author Mustafa Kabaktepe 21/01/2018, SNS Bank N.V.
+ * Retrofit interface for request callbacks.
  */
 
 public interface BakingAPI {

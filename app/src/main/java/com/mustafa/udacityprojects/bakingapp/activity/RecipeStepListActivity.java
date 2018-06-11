@@ -1,3 +1,7 @@
+/**
+ * Copyright (C) 2018 Mustafa Kabaktepe
+ */
+
 package com.mustafa.udacityprojects.bakingapp.activity;
 
 import android.content.Context;
@@ -138,7 +142,7 @@ public class RecipeStepListActivity extends AppCompatActivity
         private final List<Step> mRecipeStepDescriptions;
         private final boolean mTwoPane;
         private final Recipe mCurrentRecipe;
-        private int selectedPosition = -1;
+        private int mSelectedPosition = -1;
 
         private Step mSelectedStep;
 
@@ -146,7 +150,7 @@ public class RecipeStepListActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 mSelectedStep = (Step) view.getTag();
-                selectedPosition = getCurrentStepPosition();
+                mSelectedPosition = getCurrentStepPosition();
                 view.setSelected(mTwoPane);
 
                 notifyDataSetChanged();
@@ -213,7 +217,7 @@ public class RecipeStepListActivity extends AppCompatActivity
 
         @Override
         public void onBindViewHolder(final ViewHolder holder, int position) {
-            holder.itemView.setSelected(mTwoPane && position == selectedPosition);
+            holder.itemView.setSelected(mTwoPane && position == mSelectedPosition);
 
             Step currentStep = mRecipeStepDescriptions.get(position);
 
@@ -256,17 +260,17 @@ public class RecipeStepListActivity extends AppCompatActivity
 
         public void loadStep(int position) {
             mSelectedStep = mRecipeStepDescriptions.get(position);
-            selectedPosition = position;
+            mSelectedPosition = position;
             notifyDataSetChanged();
             launchRecipeStepDetailFragmentWithStep();
         }
 
         @Override
         public void onNextStep() {
-            selectedPosition = findIndexOfStep();
+            mSelectedPosition = findIndexOfStep();
 
-            if (mRecipeStepDescriptions.size() - 1 > selectedPosition) {
-                mSelectedStep = mRecipeStepDescriptions.get(++selectedPosition);
+            if (mRecipeStepDescriptions.size() - 1 > mSelectedPosition) {
+                mSelectedStep = mRecipeStepDescriptions.get(++mSelectedPosition);
                 notifyDataSetChanged();
                 launchRecipeStepDetailFragmentWithStep();
             } else {
@@ -277,10 +281,10 @@ public class RecipeStepListActivity extends AppCompatActivity
 
         @Override
         public void onPreviousStep() {
-            selectedPosition = findIndexOfStep();
+            mSelectedPosition = findIndexOfStep();
 
-            if (selectedPosition > 0) {
-                mSelectedStep = mRecipeStepDescriptions.get(--selectedPosition);
+            if (mSelectedPosition > 0) {
+                mSelectedStep = mRecipeStepDescriptions.get(--mSelectedPosition);
                 notifyDataSetChanged();
                 launchRecipeStepDetailFragmentWithStep();
             } else {

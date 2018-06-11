@@ -1,6 +1,9 @@
+/**
+ * Copyright (C) 2018 Mustafa Kabaktepe
+ */
+
 package com.mustafa.udacityprojects.bakingapp.adapter;
 
-import android.content.Context;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -68,6 +71,18 @@ public class RecipeRecyclerViewAdapter
         return mRecipeList.size();
     }
 
+    /**
+     * Interface that notifies it's mListener(s).
+     */
+    public interface Listener {
+        /**
+         * Invoked when the user clicks a recipe.
+         *
+         * @param recipe The recipe that has been clicked.
+         */
+        void onRecipeClick(Recipe recipe);
+    }
+
     static class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.recipe_name_text)
         TextView mTextView;
@@ -80,18 +95,6 @@ public class RecipeRecyclerViewAdapter
             super(view);
             ButterKnife.bind(this, view);
         }
-    }
-
-    /**
-     * Interface that notifies it's mListener(s).
-     */
-    public interface Listener {
-        /**
-         * Invoked when the user clicks a recipe.
-         *
-         * @param recipe The recipe that has been clicked.
-         */
-        void onRecipeClick(Recipe recipe);
     }
 
 }

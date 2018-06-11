@@ -1,13 +1,16 @@
+/**
+ * Copyright (C) 2018 Mustafa Kabaktepe
+ */
+
 package com.mustafa.udacityprojects.bakingapp.fragment;
 
 import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.net.Uri;
-import android.support.annotation.Nullable;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,24 +18,19 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.mustafa.udacityprojects.bakingapp.R;
-import com.mustafa.udacityprojects.bakingapp.activity.RecipeStepListActivity;
 import com.mustafa.udacityprojects.bakingapp.activity.RecipeStepDetailActivity;
+import com.mustafa.udacityprojects.bakingapp.activity.RecipeStepListActivity;
 import com.mustafa.udacityprojects.bakingapp.model.Step;
 
 import butterknife.BindView;
@@ -46,10 +44,8 @@ import butterknife.OnClick;
  * on handsets.
  */
 public class RecipeStepDetailFragment extends Fragment {
-    private static final String TAG = RecipeStepDetailFragment.class.getSimpleName();
-
     public static final String EXTRA_SELECTED_STEP = "EXTRA_SELECTED_STEP";
-
+    private static final String TAG = RecipeStepDetailFragment.class.getSimpleName();
     @BindView(R.id.recipe_step_instruction)
     TextView mRecipeInstructionTextView;
 
@@ -139,7 +135,9 @@ public class RecipeStepDetailFragment extends Fragment {
 
     private void launchFullScreenDialog() {
         ((ViewGroup) mPlayerView.getParent()).removeView(mPlayerView);
-        mFullScreenDialog.addContentView(mPlayerView, new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        mFullScreenDialog.addContentView(mPlayerView,
+                new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT));
         mExoPlayerFullScreen = true;
         mFullScreenDialog.show();
     }
@@ -148,8 +146,10 @@ public class RecipeStepDetailFragment extends Fragment {
 
         if (getView() != null) {
             ((ViewGroup) mPlayerView.getParent()).removeView(mPlayerView);
-            ((LinearLayout) getView().findViewById(R.id.fragment_recipe_step_detail_container)).addView(mPlayerView, 0);
-            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) mPlayerView.getLayoutParams();
+            ((LinearLayout) getView().findViewById(R.id.fragment_recipe_step_detail_container))
+                    .addView(mPlayerView, 0);
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) mPlayerView
+                    .getLayoutParams();
             params.width = ViewGroup.LayoutParams.MATCH_PARENT;
             params.height = 600;
             mPlayerView.setLayoutParams(params);
@@ -171,11 +171,12 @@ public class RecipeStepDetailFragment extends Fragment {
                 launchFullScreenDialog();
             }
 
-            String userAgent = Util.getUserAgent(getContext(),
-                    getContext().getApplicationInfo().name);
+            String userAgent = Util
+                    .getUserAgent(getContext(), getContext().getApplicationInfo().name);
             DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getContext(),
                     userAgent, null);
-            MediaSource mediaSource = new ExtractorMediaSource.Factory(dataSourceFactory).createMediaSource(Uri.parse(mediaUrl));
+            MediaSource mediaSource = new ExtractorMediaSource.Factory(dataSourceFactory)
+                    .createMediaSource(Uri.parse(mediaUrl));
             mExoPlayer.prepare(mediaSource);
             mExoPlayer.setPlayWhenReady(true);
 
