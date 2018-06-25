@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -45,7 +46,9 @@ import butterknife.OnClick;
  */
 public class RecipeStepDetailFragment extends Fragment {
     public static final String EXTRA_SELECTED_STEP = "EXTRA_SELECTED_STEP";
-    private static final String TAG = RecipeStepDetailFragment.class.getSimpleName();
+    private static final String EXTRA_PLAYER_POSITION = "EXTRA_PLAYER_POSITION";
+    private static final String EXTRA_PLAYER_PAUSED = "EXTRA_PLAYER_PAUSED";
+
     @BindView(R.id.recipe_step_instruction)
     TextView mRecipeInstructionTextView;
 
@@ -61,6 +64,8 @@ public class RecipeStepDetailFragment extends Fragment {
     private StepNavigationListener mListener;
     private Dialog mFullScreenDialog;
     private boolean mExoPlayerFullScreen;
+    private long mPlayerPosition = -1;
+    private boolean mPlayerPaused;
 
     /**
      * Create a new instance.
@@ -77,11 +82,24 @@ public class RecipeStepDetailFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putLong(EXTRA_PLAYER_POSITION, mPlayerPosition);
+        outState.putBoolean(EXTRA_PLAYER_PAUSED, mPlayerPaused);
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if (getArguments().containsKey(EXTRA_SELECTED_STEP)) {
             mCurrentStep = getArguments().getParcelable(EXTRA_SELECTED_STEP);
+        }
+
+        if (savedInstanceState != null) {
+            mPlayerPosition = savedInstanceState.getLong(EXTRA_PLAYER_POSITION);
+            mPlayerPaused = savedInstanceState.getBoolean(EXTRA_PLAYER_PAUSED);
         }
     }
 
@@ -178,14 +196,18 @@ public class RecipeStepDetailFragment extends Fragment {
             MediaSource mediaSource = new ExtractorMediaSource.Factory(dataSourceFactory)
                     .createMediaSource(Uri.parse(mediaUrl));
             mExoPlayer.prepare(mediaSource);
-            mExoPlayer.setPlayWhenReady(true);
-
+            if (mPlayerPosition != -1) {
+                mExoPlayer.seekTo(mPlayerPosition);
+            }
+            mExoPlayer.setPlayWhenReady(mPlayerPaused);
 
         }
     }
 
     private void releasePlayer() {
         if (mExoPlayer != null) {
+            mPlayerPosition = mExoPlayer.getCurrentPosition();
+            mPlayerPaused = mExoPlayer.getPlayWhenReady();
             mExoPlayer.stop();
             mExoPlayer.release();
             mExoPlayer = null;
@@ -199,16 +221,17 @@ public class RecipeStepDetailFragment extends Fragment {
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
+    public void onPause() {
+        super.onPause();
+
+        dismissFullScreenDialog();
+        releasePlayer();
     }
 
     @Override
-    public void onDestroy() {
-        dismissFullScreenDialog();
-        releasePlayer();
-        super.onDestroy();
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
     }
 
     @OnClick(R.id.navigate_next_step)
